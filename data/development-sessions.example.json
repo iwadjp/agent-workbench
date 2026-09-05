@@ -1,0 +1,129 @@
+{
+  "version": 2,
+  "presets": [
+    {
+      "id": "windows-shell",
+      "label": "Shellのみ Windows",
+      "platform": "windows",
+      "items": [
+        {
+          "id": "shell",
+          "label": "PowerShell",
+          "kind": "process",
+          "enabledByDefault": true,
+          "command": "powershell.exe",
+          "args": ["-NoExit"],
+          "cwd": "."
+        }
+      ]
+    },
+    {
+      "id": "windows-ai",
+      "label": "AI開発 Windows",
+      "platform": "windows",
+      "items": [
+        {
+          "id": "claude",
+          "label": "Claude Code",
+          "kind": "agent",
+          "enabledByDefault": true,
+          "command": "claude",
+          "args": [],
+          "cwd": "."
+        },
+        {
+          "id": "codex",
+          "label": "Codex",
+          "kind": "agent",
+          "enabledByDefault": true,
+          "command": "codex",
+          "args": [],
+          "cwd": "."
+        }
+      ]
+    },
+    {
+      "id": "wsl-shell",
+      "label": "Shellのみ WSL",
+      "platform": "wsl",
+      "items": [
+        {
+          "id": "shell",
+          "label": "WSL shell",
+          "kind": "process",
+          "enabledByDefault": true,
+          "command": "bash",
+          "args": ["-l"],
+          "cwd": "."
+        }
+      ]
+    },
+    {
+      "id": "wsl-ai",
+      "label": "AI開発 WSL",
+      "platform": "wsl",
+      "items": [
+        {
+          "id": "shell",
+          "label": "WSL shell",
+          "kind": "process",
+          "enabledByDefault": true,
+          "command": "bash",
+          "args": ["-l"],
+          "cwd": "."
+        },
+        {
+          "id": "claude",
+          "label": "Claude Code",
+          "kind": "agent",
+          "enabledByDefault": true,
+          "command": "claude",
+          "args": [],
+          "cwd": "."
+        },
+        {
+          "id": "codex",
+          "label": "Codex",
+          "kind": "agent",
+          "enabledByDefault": true,
+          "command": "codex",
+          "args": [],
+          "cwd": "."
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "targetId": "sample-workspace",
+      "path": "D:\\path\\to\\windows-project",
+      "presetId": "windows-ai",
+      "additionalItems": []
+    },
+    {
+      "targetId": "sample-workspace",
+      "path": "D:\\path\\to\\windows-web-project",
+      "presetId": "windows-ai",
+      "additionalItems": [
+        {
+          "id": "dev-server",
+          "label": "Dev server",
+          "kind": "process",
+          "enabledByDefault": true,
+          "command": "npm",
+          "args": ["start"],
+          "cwd": "."
+        }
+      ]
+    },
+    {
+      "targetId": "wsl_example_target",
+      "path": "\\\\wsl.localhost\\Ubuntu\\path\\to\\wsl-project",
+      "presetId": "wsl-ai",
+      "additionalItems": [],
+      "itemOverrides": {
+        "codex": { "enabledByDefault": false }
+      }
+    }
+  ]
+}

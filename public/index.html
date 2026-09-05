@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#22577a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Agent Workbench">
+<title>agent-workbench</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/agent-workbench.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/agent-workbench-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>agent-workbench</h1>
+  <div class="header-right">
+    <span id="scan-info"></span>
+    <button id="signals-btn" type="button" title="全プロジェクトの課題・進捗・再利用候補をAI分析用Markdownとしてコピーします">Copy project signals</button>
+    <button id="rescan-btn">再スキャン</button>
+  </div>
+</header>
+
+<section id="action-queue" class="action-queue" aria-label="action queue"></section>
+
+<section id="summary" class="summary"></section>
+
+<details id="scan-details" class="scan-details">
+  <summary>
+    <span>スキャン詳細 / Scanner health</span>
+    <span id="scan-details-meta" class="scan-details-meta"></span>
+  </summary>
+  <section id="config-errors" class="config-errors" hidden></section>
+  <section id="target-summary" class="target-summary"></section>
+</details>
+
+<details id="scan-history" class="scan-history">
+  <summary>Scan history</summary>
+  <div id="scan-history-body" class="scan-history-body">読み込み中...</div>
+</details>
+
+<section class="toolbar" aria-label="project filters">
+  <div class="primary-filter-row">
+    <span id="presets" class="presets" aria-label="常用フィルター">
+      <button data-preset="all">All</button>
+      <button data-preset="attention">Attention</button>
+      <button data-preset="active">Active</button>
+      <button data-preset="dogfooding">Dogfooding</button>
+      <button data-preset="dirty">Dirty</button>
+    </span>
+    <label class="project-search">
+      <span>project検索</span>
+      <input id="project-search" type="search" placeholder="repo名で検索" autocomplete="off">
+    </label>
+    <span id="mobile-filter-count" class="filter-count mobile-filter-count"></span>
+  </div>
+  <details id="advanced-filters" class="advanced-filters" open>
+    <summary>
+      <span>詳細フィルター</span>
+      <span id="active-filter-summary" class="active-filter-summary"></span>
+    </summary>
+    <div class="advanced-filter-body">
+      <button class="audit-preset" data-preset="noremote-audit" title="remote=no-remote（origin未設定repoを一覧表示。判断はnoteに）">No-remote audit</button>
+      <span class="toolbar-sep"></span>
+      <span class="ms-filter" id="ms-target">
+        <button type="button" class="ms-toggle" data-role="ms-toggle" data-ms="target">target: すべて</button>
+        <div class="ms-panel" data-role="ms-panel" data-ms="target" hidden>
+          <input type="text" class="ms-text" data-role="target-text" placeholder="target名で絞り込み（部分一致）">
+          <div class="ms-checks" data-role="target-checks"></div>
+        </div>
+      </span>
+      <label>git:
+        <select id="filter-git">
+          <option value="all">すべて</option>
+          <option value="not-clean">clean以外</option>
+          <option value="dirty">dirty</option>
+          <option value="untracked-only">untracked</option>
+          <option value="error">error</option>
+          <option value="no-git">no git</option>
+        </select>
+      </label>
+      <span class="ms-filter" id="ms-status">
+        <button type="button" class="ms-toggle" data-role="ms-toggle" data-ms="status">status: すべて</button>
+        <div class="ms-panel" data-role="ms-panel" data-ms="status" hidden>
+          <div class="ms-checks" data-role="status-checks">
+            <label><input type="checkbox" value="active"> active</label>
+            <label><input type="checkbox" value="dogfooding"> dogfooding</label>
+            <label><input type="checkbox" value="paused"> paused</label>
+            <label><input type="checkbox" value="abandoned"> abandoned</label>
+            <label><input type="checkbox" value="released"> released</label>
+            <label><input type="checkbox" value="unknown"> unknown</label>
+          </div>
+        </div>
+      </span>
+      <label>PROGRESS:
+        <select id="filter-progress">
+          <option value="all">すべて</option>
+          <option value="yes">あり</option>
+          <option value="no">なし</option>
+        </select>
+      </label>
+      <label>remote:
+        <select id="filter-remote">
+          <option value="all">すべて</option>
+          <option value="enabled">enabledのみ</option>
+          <option value="attention">attention</option>
+          <option value="up-to-date">up-to-date</option>
+          <option value="ahead">ahead</option>
+          <option value="behind">behind</option>
+          <option value="diverged">diverged</option>
+          <option value="no-remote">no-remote</option>
+          <option value="no-upstream">no-upstream</option>
+          <option value="error">error</option>
+          <option value="disabled">disabled</option>
+        </select>
+      </label>
+      <span id="filter-count" class="filter-count"></span>
+    </div>
+  </details>
+</section>
+
+<main>
+  <table id="repo-table">
+    <thead>
+      <tr>
+        <th class="sortable" data-sort="name">repo</th>
+        <th class="sortable" data-sort="target">target</th>
+        <th class="sortable" data-sort="manualStatus">status</th>
+        <th class="sortable" data-sort="gitStatus">git</th>
+        <th>branch</th>
+        <th class="sortable" data-sort="commitDate">latest commit</th>
+        <th class="sortable num" data-sort="idleDays">放置</th>
+        <th class="sortable num" data-sort="changeCount">変更</th>
+        <th class="flag">R</th>
+        <th class="flag">P</th>
+      </tr>
+    </thead>
+    <tbody id="repo-tbody"></tbody>
+  </table>
+</main>
+
+<footer>
+  <span id="config-source"></span>
+  <span id="scan-root"></span>
+</footer>
+
+<script src="resume-summary.js"></script>
+<script src="project-signals.js"></script>
+<script src="action-queue.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

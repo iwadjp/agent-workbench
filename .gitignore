@@ -1,0 +1,12 @@
+node_modules/
+data/projects.json
+data/scan-history.json
+data/project-context.json
+data/development-sessions.json
+data/generated-workspaces/
+data/portfolio-items/
+data/*.tmp
+data/*.bak
+config/roots.local.json
+config/roots.json
+npm-debug.log*

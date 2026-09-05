@@ -1,0 +1,1934 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Meiryo", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
+  font-size: 14px;
+  color: #222;
+  background: #f5f6f8;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+header h1 { font-size: 18px; margin: 0; }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+#scan-info { color: #777; font-size: 12px; }
+
+button {
+  font: inherit;
+  padding: 4px 12px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+button:hover { background: #eef2f7; }
+button:disabled { opacity: 0.5; cursor: default; }
+
+/* サマリー */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+}
+.summary-desktop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.summary-mobile { display: none; }
+.summary .card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px 14px;
+  text-align: center;
+  min-width: 72px;
+}
+.summary .card .value { font-size: 20px; font-weight: bold; }
+.summary .card .label { font-size: 11px; color: #777; }
+.summary .card.warn .value { color: #c0392b; }
+
+/* Action Queue（Increment 1）: repo table / Scanner health とは分離した判断ビュー。
+   画面上部の主役はこのセクション。scanner 情報はここに出さない。 */
+.action-queue {
+  padding: 12px 16px 4px;
+}
+.action-queue .aq-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.action-queue h2 {
+  font-size: 15px;
+  margin: 0;
+  color: #22303c;
+}
+.action-queue .aq-counts { font-size: 12px; color: #777; }
+.action-queue .aq-empty {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #777;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+.aq-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #dcdfe3;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 13px;
+}
+.aq-table thead th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  padding: 6px 10px;
+  background: #f7f8fa;
+  border-bottom: 1px solid #e2e5e9;
+  white-space: nowrap;
+}
+.aq-table tbody td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #eef0f2;
+  vertical-align: top;
+}
+.aq-table tbody tr:last-child td { border-bottom: none; }
+.aq-row { cursor: pointer; }
+.aq-row:hover { background: #f2f7fd; }
+.aq-row:focus-visible { outline: 2px solid #2f7fd0; outline-offset: -2px; }
+.aq-name { font-weight: 600; color: #24313d; min-width: 140px; }
+.aq-name .aq-name-text { word-break: break-all; }
+.aq-name .aq-target {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: #9098a1;
+}
+.aq-scan-warn {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #92278f;
+  background: #f3d6f0;
+  border-radius: 3px;
+}
+.aq-now { color: #333; max-width: 340px; }
+.aq-whys { max-width: 220px; }
+.aq-why {
+  display: inline-block;
+  margin: 0 4px 3px 0;
+  padding: 1px 6px;
+  font-size: 11px;
+  color: #4a5560;
+  background: #eef1f4;
+  border-radius: 3px;
+}
+.aq-why-none { background: transparent; color: #aaa; padding: 0; }
+.aq-next-date { white-space: nowrap; }
+.aq-date { font-family: Consolas, monospace; color: #4a5560; }
+.aq-date-due { color: #b03020; font-weight: 700; }
+.aq-human { text-align: center; }
+.aq-human-yes {
+  display: inline-block;
+  min-width: 20px;
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #96700a;
+  background: #fdf3d8;
+  border-radius: 3px;
+}
+.badge.aq-state-action { background: #d9ecff; color: #1a5fa8; font-weight: bold; }
+.badge.aq-state-observe { background: #dff5ec; color: #157a53; }
+.badge.aq-state-wait { background: #fdf3d8; color: #96700a; }
+.badge.aq-state-none { background: #f2f2f2; color: #aaa; }
+.aq-toggle {
+  margin: 8px 0 2px;
+  font-size: 12px;
+  padding: 3px 12px;
+}
+/* 詳細ペインの「運用（Portfolio）」ブロック（Increment 2） */
+.ops-block .ops-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 3px 12px;
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+.ops-block .ops-list dt { color: #888; font-size: 11px; align-self: start; }
+.ops-block .ops-list dd { margin: 0; }
+.ops-block .ops-signal { white-space: pre-wrap; }
+.ops-block .ops-nonrepo { margin-top: 6px; }
+
+/* Now / Watching / Waiting の3セクション */
+.aq-section { margin-top: 10px; }
+.aq-section-now { margin-top: 4px; }
+.aq-section-head {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4a5560;
+  margin: 0 0 5px;
+}
+details.aq-section > summary {
+  cursor: pointer;
+  color: #666;
+  font-size: 12px;
+  padding: 4px 0;
+}
+details.aq-section > summary:hover { color: #333; }
+details.aq-section > .aq-table { margin-top: 6px; }
+/* Watching / Waiting は Now より視覚的に控えめに */
+.aq-table-secondary { opacity: 0.92; }
+.aq-watching, .aq-waiting { font-size: 12px; }
+
+/* フィルタツールバー */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px 10px;
+  font-size: 13px;
+  color: #555;
+  position: relative; /* .ms-panel の絶対配置の基準 */
+}
+.primary-filter-row,
+.advanced-filters,
+.advanced-filter-body { display: contents; }
+.advanced-filters > summary { display: none; }
+.project-search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.project-search input {
+  width: 150px;
+  min-width: 0;
+  font: inherit;
+  padding: 3px 7px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+}
+.mobile-filter-count { display: none; }
+.audit-preset {
+  padding: 3px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+}
+.audit-preset.active {
+  background: #2f6db3;
+  border-color: #2f6db3;
+  color: #fff;
+}
+.toolbar select {
+  font: inherit;
+  padding: 2px 6px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+}
+.filter-count { color: #999; font-size: 12px; }
+
+/* プリセットボタン */
+.presets { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.presets button {
+  padding: 3px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  border: 1px solid #bbb;
+  background: #fff;
+}
+.presets button.active {
+  background: #2f6db3;
+  border-color: #2f6db3;
+  color: #fff;
+}
+.toolbar-sep {
+  width: 1px;
+  align-self: stretch;
+  background: #ddd;
+}
+
+/* target / status の複数選択フィルタ（vanilla JSのシンプルなチェックボックス群） */
+.ms-filter { position: relative; display: inline-block; }
+.ms-toggle {
+  font: inherit;
+  font-size: 13px;
+  padding: 2px 8px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ms-toggle.ms-active {
+  border-color: #2f6db3;
+  background: #eaf1fa;
+  color: #1a4d80;
+}
+.ms-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  z-index: 20;
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  min-width: 200px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.ms-panel .ms-text {
+  font: inherit;
+  font-size: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 3px 6px;
+  margin-bottom: 6px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+.ms-checks { display: flex; flex-direction: column; gap: 2px; }
+.ms-checks label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 1px 2px;
+}
+.ms-checks label:hover { background: #f4f8fc; }
+
+/* テーブル */
+main { padding: 0 16px 24px; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #ddd;
+}
+/* table-layout:fixed で列幅を固定し、詳細行（colspanでMarkdown/Plain textを
+   切り替える内容を含む）が上部の列幅に影響しないようにする */
+#repo-table { table-layout: fixed; }
+#repo-table th:nth-child(1), #repo-table td:nth-child(1)  { width: 17%; } /* repo */
+#repo-table th:nth-child(2), #repo-table td:nth-child(2)  { width: 11%; } /* target */
+#repo-table th:nth-child(3), #repo-table td:nth-child(3)  { width: 9%; }  /* status */
+#repo-table th:nth-child(4), #repo-table td:nth-child(4)  { width: 10%; } /* git */
+#repo-table th:nth-child(5), #repo-table td:nth-child(5)  { width: 8%; }  /* branch */
+#repo-table th:nth-child(6), #repo-table td:nth-child(6)  { width: 23%; } /* latest commit */
+#repo-table th:nth-child(7), #repo-table td:nth-child(7)  { width: 7%; }  /* 放置 */
+#repo-table th:nth-child(8), #repo-table td:nth-child(8)  { width: 6%; }  /* 変更 */
+#repo-table th:nth-child(9), #repo-table td:nth-child(9)  { width: 26px; } /* R */
+#repo-table th:nth-child(10), #repo-table td:nth-child(10) { width: 26px; } /* P */
+th, td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #e5e5e5;
+  text-align: left;
+  vertical-align: middle;
+}
+th {
+  background: #f0f2f5;
+  font-size: 12px;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 4; /* .project-identity(3)より上に重ねる */
+}
+th.num, td.num { text-align: right; }
+th.flag, td.flag { text-align: center; width: 28px; }
+
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { background: #e4e8ee; }
+th.sortable.sorted::after { content: " ▲"; font-size: 9px; color: #666; }
+th.sortable.sorted[data-dir="desc"]::after { content: " ▼"; }
+
+tr.repo-row { cursor: pointer; }
+tr.repo-row td:first-child { border-left: 3px solid transparent; }
+tr.repo-row:hover { background: #f4f8fc; }
+/* clean以外は左端のアクセント＋薄い背景で目立たせる（強すぎない色） */
+tr.repo-row.attn-dirty td:first-child { border-left-color: #d9634f; }
+tr.repo-row.attn-dirty { background: #fdf4f2; }
+tr.repo-row.attn-dirty:hover { background: #f9e8e4; }
+tr.repo-row.attn-untracked-only td:first-child { border-left-color: #e0b23c; }
+tr.repo-row.attn-untracked-only { background: #fdfaf0; }
+tr.repo-row.attn-untracked-only:hover { background: #f8f1dc; }
+tr.repo-row.attn-error td:first-child { border-left-color: #b054ac; }
+tr.repo-row.attn-error { background: #fbf3fa; }
+tr.repo-row.attn-no-git td:first-child { border-left-color: #aaa; }
+tr.repo-row.attn-missing td:first-child { border-left-color: #b03020; }
+tr.repo-row.attn-missing { background: #fdf0ee; }
+td.target-cell { font-size: 12px; color: #667; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* target別スキャン状況 */
+.target-summary {
+  padding: 0 16px 8px;
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+/* Scanner health は Action Queue より常に下位。既定は閉じ、コンパクトな
+   toggle 行だけを常時表示する（件数警告は #scan-details-meta が出す）。 */
+.scan-details { padding: 2px 16px 4px; }
+.scan-details > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 11px;
+  color: #8a929c;
+  padding: 2px 0;
+}
+.scan-details > summary::-webkit-details-marker { display: none; }
+.scan-details > summary::before { content: "▸"; font-size: 9px; color: #b0b6bd; }
+.scan-details[open] > summary::before { content: "▾"; }
+.scan-details-meta.is-slow { color: #96700a; font-weight: 600; }
+.scan-details-meta.is-bad { color: #b03020; font-weight: 700; }
+.target-summary:empty { display: none; }
+.ts-head { color: #999; }
+.ts-item {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1px 10px;
+  white-space: nowrap;
+}
+.ts-item.ts-disabled { color: #aaa; border-style: dashed; }
+.ts-item em.ts-rd,
+.ts-item em.ts-rd-slow,
+.ts-item em.ts-rd-veryslow { font-style: normal; font-size: 11px; }
+.ts-item em.ts-rd { color: #999; }
+.ts-item em.ts-rd-slow { color: #96700a; font-weight: bold; }
+.ts-item em.ts-rd-veryslow { color: #b03020; font-weight: bold; }
+.ts-item.ts-bad { color: #b03020; border-color: #e0a49c; background: #fdf4f2; }
+.ts-item.ts-slow { color: #96700a; border-color: #e0c37a; background: #fdfaf0; }
+.ts-item.ts-veryslow { color: #b03020; border-color: #e0a49c; background: #fdf4f2; font-weight: bold; }
+
+/* スキャン履歴（折りたたみ・初期は閉じる） */
+.scan-history {
+  margin: 0 16px 8px;
+  font-size: 12px;
+  color: #777;
+}
+.scan-history summary {
+  cursor: pointer;
+  color: #999;
+  user-select: none;
+}
+.scan-history-body {
+  padding: 6px 0 2px 14px;
+  font-family: Consolas, monospace;
+}
+.sh-row { margin-bottom: 2px; }
+.sh-label { font-weight: bold; color: #556; }
+.sh-slow { color: #96700a; font-weight: bold; }
+
+/* 設定エラーバナー */
+.config-errors {
+  margin: 0 16px 10px;
+  padding: 8px 12px;
+  background: #fdf3d8;
+  border: 1px solid #e6c86a;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #6b5312;
+}
+/* 選択中（詳細展開中）の行は、attn系の色よりも優先して明確にハイライトする */
+tr.repo-row.open { background: #dce9f8; }
+tr.repo-row.open:hover { background: #d0e1f5; }
+tr.repo-row.open td:first-child { border-left-color: #2f6db3; }
+tr.repo-row.open td { border-bottom-color: #b9cfe8; }
+
+td.idle-fresh { color: #1e7b2e; }
+td.idle-stale { color: #96700a; }
+td.idle-old { color: #b03020; font-weight: bold; }
+td.idle-unknown { color: #aaa; }
+td.num { white-space: nowrap; font-size: 12px; }
+td.empty { text-align: center; color: #999; padding: 24px; }
+
+td.repo-name {
+  font-weight: bold;
+  overflow: hidden;
+}
+/* td自体をdisplay:flexにすると table-layout:fixed の列幅計算から
+   セルが外れてしまい（実測で列幅が縮小し、隣の列との間に空白の
+   「ガター列」が生じる）、そのため内側にflexラッパーを挟んでいる。 */
+td.repo-name .repo-name-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  width: 100%;
+}
+td.repo-name .repo-name-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.row-rescan-btn {
+  flex: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 1px 4px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+  color: #888;
+  cursor: pointer;
+}
+.row-rescan-btn:hover { background: #eef2f7; color: #2f6db3; border-color: #2f6db3; }
+td.commit-cell {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+td .hash { font-family: Consolas, monospace; color: #888; margin-right: 6px; }
+td .cdate { color: #999; font-size: 11px; margin-left: 6px; }
+
+/* バッジ */
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.badge.git-clean { background: #e3f4e3; color: #1e7b2e; }
+.badge.git-dirty { background: #fbdcd6; color: #b03020; font-weight: bold; }
+.badge.git-untracked-only { background: #fdf3d8; color: #96700a; }
+.badge.git-no-git { background: #eee; color: #888; }
+.badge.git-error { background: #f3d6f0; color: #92278f; }
+.badge.kind-missing { background: #fbdcd6; color: #b03020; border: 1px dashed #b03020; }
+
+/* remote tracking バッジ（remoteStatus:true のtargetのみ表示） */
+.badge.rm { margin-left: 4px; font-family: Consolas, monospace; }
+.badge.rm-sync { background: #eef6ee; color: #4a8a55; }
+.badge.rm-ahead { background: #d9ecff; color: #1a5fa8; font-weight: bold; }
+.badge.rm-behind { background: #fdf3d8; color: #96700a; font-weight: bold; }
+.badge.rm-diverged { background: #fbdcd6; color: #b03020; font-weight: bold; }
+.badge.rm-none { background: #f2f2f2; color: #999; }
+.badge.rm-error { background: #f3d6f0; color: #92278f; }
+
+.badge.st-active     { background: #d9ecff; color: #1a5fa8; }
+.badge.st-dogfooding { background: #dff5ec; color: #157a53; }
+.badge.st-paused     { background: #fdf3d8; color: #96700a; }
+.badge.st-abandoned  { background: #eee;    color: #888; }
+.badge.st-released   { background: #e8e0f7; color: #5b3ca8; }
+.badge.st-unknown    { background: #f2f2f2; color: #aaa; }
+
+/* 詳細行 */
+tr.detail-row td {
+  background: #fafbfc;
+  padding: 12px 16px;
+}
+
+/* Phase 5-C: project identity header。詳細ペインをスクロールしても
+   対象projectを見失わないよう、一覧のsticky thead（高さ約31px）の
+   すぐ下に貼り付ける。同名projectはtarget/pathで区別する */
+.project-identity {
+  position: sticky;
+  top: 31px; /* sticky theadの高さ分下げる（thの実測高に合わせる） */
+  z-index: 3;
+  background: #fafbfc;
+  margin: -12px -16px 10px; /* tdのpaddingを打ち消して全幅に広げる */
+  padding: 6px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+.project-identity .pi-line1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.project-identity .pi-selected {
+  flex: none;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: #2f6db3;
+  color: #fff;
+}
+.project-identity .pi-name { font-size: 14px; }
+.project-identity .pi-target { font-size: 12px; color: #667; }
+.project-identity .pi-path {
+  font-family: Consolas, monospace;
+  font-size: 11px;
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Phase 6-K: Alwaysヘッダー。詳細ペインを開いた瞬間（first viewport）に、
+   常用情報（repo名/target/status/Git/branch/HEAD/保存context鮮度/Next action/
+   Development session開始/VSCodeだけ開く/該当時のみRuntime helper）が
+   すべて見えるよう、detail-gridの外側（全幅）・最上部に置く */
+.always-header {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: #eef4fb;
+  border: 1px solid #bcd2ea;
+  border-radius: 5px;
+}
+.always-header .block { margin: 0 0 8px; }
+.always-header .block:last-child { margin-bottom: 0; }
+.ah-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.ah-name { font-size: 15px; }
+.ah-target { font-size: 12px; }
+.always-header .detail-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.ah-commit-row { margin-bottom: 6px; }
+.ah-commit-row .commit-line { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+.ah-commit-row .commit-msg { font-weight: bold; }
+.ah-warning {
+  margin-bottom: 6px;
+  padding: 4px 8px;
+  background: #fdeee0;
+  border: 1px solid #e8b98a;
+  border-radius: 4px;
+  color: #96540a;
+  font-size: 12px;
+}
+.ah-next-action { margin-bottom: 8px; }
+.ah-next-action h4 {
+  margin: 0 0 3px;
+  font-size: 11px;
+  color: #1a4d80;
+}
+.ah-next-action-text {
+  font-size: 13px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+@media (max-width: 800px) {
+  .always-header { margin: 0 0 10px; padding: 9px; }
+  /* mobile Phase 3: Compact overview。project名を最優先しつつ、長いtarget名・
+     branch名・commit messageで横スクロールが出ないようにする（色だけに頼らない
+     status/Git/freshness表示は既存のbadge+テキストのまま変更していない） */
+  .ah-name { font-size: 16px; overflow-wrap: anywhere; }
+  .ah-target { overflow-wrap: anywhere; }
+  .ah-commit-row .commit-msg { overflow-wrap: anywhere; }
+  .always-header .detail-status .cdate { overflow-wrap: anywhere; }
+}
+
+/* 再開サマリー（Resume summary）。保存された作業コンテキスト（Agent context /
+   PROGRESS.md由来）だけを表示する。現在のrepo（live）はAlwaysヘッダーが表示するため
+   ここには置かない。detail-gridの外側（全幅）に置くため、h3も個別に指定する */
+.resume-summary {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #f4f8fc;
+  border: 1px solid #cfdded;
+  border-radius: 4px;
+}
+.resume-summary h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: #1a4d80;
+  border-bottom: 1px solid #d5e0ec;
+  padding-bottom: 2px;
+}
+.resume-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 3px 14px;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  max-height: 240px; /* 長文でも一覧の閲覧を妨げるほど縦に伸びない */
+  overflow-y: auto;
+}
+.resume-list dt { color: #556; font-weight: 600; white-space: nowrap; }
+.resume-list dd {
+  margin: 0;
+  min-width: 0;
+  white-space: pre-wrap;     /* 改行を保持しつつ折り返す */
+  overflow-wrap: break-word; /* 長いパス等でも横スクロールを出さない */
+}
+@media (max-width: 800px) {
+  .resume-list { grid-template-columns: 1fr; }
+  .resume-list dd { margin-bottom: 6px; }
+}
+
+/* 「現在のrepo」（live・常時表示）と「保存された作業コンテキスト」（保存時点のスナップショット）
+   を視覚的に分離する。現在HEADと保存時HEADを絶対に混同させないため、背景・見出し色を変える */
+.resume-live {
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  background: #eef7ee;
+  border: 1px solid #cfe6cf;
+  border-radius: 4px;
+}
+.resume-live h4, .resume-saved h4 {
+  margin: 0 0 4px;
+  font-size: 11px;
+  color: #2a6b2a;
+  text-transform: none;
+}
+.resume-saved h4 { color: #6b4e1a; }
+.resume-saved {
+  padding: 6px 10px;
+  background: #fbf5e8;
+  border: 1px solid #ecdcb8;
+  border-radius: 4px;
+}
+.resume-live-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 12px;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.resume-live-list dt { color: #556; font-weight: 600; white-space: nowrap; }
+.resume-live-list dd { margin: 0; min-width: 0; overflow-wrap: break-word; }
+.resume-live-list .hash, .resume-saved-meta .hash {
+  font-family: Consolas, monospace;
+  word-break: break-all; /* 長いhashでもmobileで横スクロールを出さない */
+}
+.resume-saved-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 12px;
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.resume-saved-meta dt { color: #6b5a30; font-weight: 600; white-space: nowrap; }
+.resume-saved-meta dd { margin: 0; min-width: 0; overflow-wrap: break-word; }
+.resume-file-note { margin: 2px 0 6px; }
+.freshness-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.freshness-badge.freshness-current { background: #dff3df; color: #1e7b2e; }
+.freshness-badge.freshness-stale { background: #fde6d8; color: #a04a12; }
+.freshness-badge.freshness-unknown { background: #eaeaea; color: #666; }
+@media (max-width: 800px) {
+  .resume-live-list, .resume-saved-meta { grid-template-columns: 1fr; }
+  .resume-live-list dd, .resume-saved-meta dd { margin-bottom: 4px; }
+}
+
+/* Rescan結果: 短い1行＋折りたたみ詳細。保存済みcontextの上書きと誤認されないよう、
+   「対象外」欄で常に何を触らないかを明示する */
+.rescan-summary { font-weight: 600; }
+.rescan-summary.err { color: #b03020; }
+.rescan-detail { margin-top: 4px; font-size: 12px; }
+.rescan-detail summary {
+  cursor: pointer;
+  color: #556;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+.rescan-detail > div { margin: 2px 0; }
+@media (max-width: 800px) {
+  .rescan-detail summary { min-height: 44px; }
+  .rescan-block button[data-role="rescan-project"] { min-height: 44px; }
+}
+
+/* スキャン診断の折りたたみ（初期は閉じる。totalはsummary行で見える） */
+.scan-diag-details summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: #666;
+  user-select: none;
+}
+
+/* Phase 6-L: 常時表示のAlways/Resume/Handoffの下に、Documents/Context/
+   Diagnosticsの3タブ（案A。Resumeは既にAlways直下にあるためタブへ含めない）を
+   置く。detail-content自体はdisplay:contentsのまま（tdのpaddingを直接使う）。
+   旧2カラムのdetail-grid/detail-col-left/detail-col-rightはPhase 6-Lで廃止した
+   （各panelへ情報を再分配したため空になった。mobileでも旧flex order
+   reorderingは不要になっている） */
+.detail-content { display: contents; }
+.always-header h3, .detail-panel h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: #666;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 2px;
+}
+.always-header h3 .progress-src, .detail-panel h3 .progress-src {
+  float: right;
+  font-weight: normal;
+  font-family: Consolas, monospace;
+}
+.progress-err { margin-bottom: 4px; color: #96700a; }
+
+.detail-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 14px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0;
+}
+.detail-tab-btn {
+  padding: 7px 14px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  font-size: 13px;
+  color: #556;
+}
+.detail-tab-btn:hover { background: #f0f4f8; }
+.detail-tab-btn.active {
+  color: #1a4d80;
+  font-weight: 600;
+  background: #eef4fb;
+  border-color: #d5e0ec;
+  border-bottom: 2px solid #2f6db3;
+  margin-bottom: -1px;
+}
+.detail-tab-btn:focus-visible { outline: 2px solid #2f6db3; outline-offset: 1px; }
+/* mobile Phase 3: Documents/Context/Diagnosticsのaccordion toggle。PC幅では
+   `.detail-tabs`のtab切替をそのまま使うため常に非表示（mobile側のmedia query
+   でのみ表示する） */
+.mobile-accordion-toggle { display: none; }
+.detail-panel { min-width: 0; }
+.documents-subnav { margin-bottom: 10px; }
+.diag-section { margin-bottom: 18px; }
+.diag-section:last-child { margin-bottom: 0; }
+.diag-section > h4 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #7a8490;
+}
+.context-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.context-section-heading h3 { flex: 1; }
+.context-view-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 3px 14px;
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.context-view-list dt { color: #556; font-weight: 600; white-space: nowrap; }
+.context-view-list dd { margin: 0; min-width: 0; white-space: pre-wrap; overflow-wrap: break-word; }
+.agent-context-block.editing .context-section-heading { border-bottom: 1px solid #d5e0ec; padding-bottom: 4px; }
+@media (max-width: 800px) {
+  .context-view-list { grid-template-columns: 1fr; }
+  .context-view-list dd { margin-bottom: 6px; }
+}
+
+.progress-block { min-width: 0; } /* 一覧テーブルの列幅に影響しないよう、内容による最小幅の突っ張りを避ける */
+.progress-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.progress-block-header h3 { flex: 1; margin-bottom: 6px; }
+.readme-details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  color: #556;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.readme-summary-label { font-weight: 600; }
+#readme-body { margin-top: 6px; }
+.readme-controls { margin-bottom: 6px; }
+.progress-block-body, .readme-block-body {
+  padding: 8px 10px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+/* Phase 6-L follow-up x2: PROGRESS/README本文の表示領域。PROGRESSは常時表示の
+   主documentとして十分な高さを、READMEは折りたたみ（開いた時だけ）なので
+   PROGRESSほど大きな固定領域を必須にしない（両方を同時に開くとDocuments全体が
+   長くなりすぎるため）。.documents-bodyは共通のscroll容器としての土台
+   （overflow:auto）だけを持ち、実際の高さはvariant class
+   （-progress / -readme）で決める。調整はこの2 variantだけで完結する */
+.documents-body { overflow: auto; }
+.documents-body-progress { min-height: 420px; height: clamp(420px, 52vh, 720px); }
+.documents-body-readme { min-height: 320px; height: clamp(320px, 45vh, 640px); }
+@media (max-width: 800px) {
+  .documents-body-progress { height: auto; min-height: 0; max-height: min(56vh, 480px); }
+  .documents-body-readme { height: auto; min-height: 0; max-height: min(52vh, 420px); }
+}
+
+/* Markdown / Plain text 切替トグル */
+.progress-mode-toggle { display: flex; gap: 4px; flex-shrink: 0; }
+.progress-mode-toggle .pm-btn {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid #bbb;
+  background: #fff;
+  cursor: pointer;
+}
+.progress-mode-toggle .pm-btn.active {
+  background: #2f6db3;
+  border-color: #2f6db3;
+  color: #fff;
+}
+
+/* PROGRESS.md の簡易Markdown表示 */
+.md-body { font-size: 13px; line-height: 1.6; }
+.md-body h1, .md-body h2, .md-body h3, .md-body h4 {
+  margin: 12px 0 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+.md-body h1:first-child, .md-body h2:first-child,
+.md-body h3:first-child, .md-body h4:first-child { margin-top: 0; }
+.md-body p { margin: 0 0 8px; }
+.md-body ul { margin: 0.3rem 0 0.7rem 0; padding-left: 1.4rem; }
+.md-body li { margin: 0.2rem 0; }
+/* ネストしたulは外側のliの中に入るため、余白を詰めてネストが視覚的に分かるようにする */
+.md-body li > ul { margin: 0.2rem 0 0.2rem 0; padding-left: 1.2rem; }
+.md-body code {
+  font-family: Consolas, monospace;
+  background: #f0f2f5;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+.md-body pre.md-code {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  overflow-x: auto;
+  margin: 0 0 8px;
+}
+.md-body pre.md-code code { background: none; padding: 0; }
+.md-body hr { border: none; border-top: 1px solid #e0e0e0; margin: 10px 0; }
+.md-body strong { font-weight: bold; }
+
+/* Markdown table。横に長い表でもPROGRESS表示領域の幅を壊さないよう
+   親のwrapperで横スクロールさせる */
+.md-body .md-table-wrap {
+  overflow-x: auto;
+  margin: 0 0 8px;
+  max-width: 100%;
+}
+.md-body table.md-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12.5px;
+}
+.md-body table.md-table th,
+.md-body table.md-table td {
+  border: 1px solid #e0e0e0;
+  padding: 4px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+.md-body table.md-table th {
+  background: #f5f6f8;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* repo単位スキャン時間（slow時のみ一覧に表示） */
+.scan-dur {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: 11px;
+  font-family: Consolas, monospace;
+  border-radius: 8px;
+  padding: 0 6px;
+}
+.scan-dur.slow { background: #fdf3d8; color: #96700a; }
+.scan-dur.very-slow { background: #fbdcd6; color: #b03020; font-weight: bold; }
+ul.scan-steps {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  font-family: Consolas, monospace;
+  color: #667;
+  columns: 2;
+}
+
+/* Git診断（dubious ownership等） */
+.raw-error { font-family: Consolas, monospace; font-size: 12px; word-break: break-all; color: #92278f; }
+.git-diag {
+  background: #fdfaf0;
+  border: 1px solid #e6c86a;
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+pre.diag-cmd {
+  margin: 4px 0 0;
+  padding: 6px 8px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  user-select: all; /* クリックで全選択してコピーしやすく */
+}
+.detail-panel .block { margin-bottom: 14px; }
+.detail-panel .path {
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  word-break: break-all;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 5px 8px;
+  user-select: all; /* クリックで全選択してコピーしやすく */
+}
+.detail-panel .commit-line { display: flex; gap: 6px; align-items: baseline; }
+.detail-panel .commit-msg { font-weight: bold; }
+.tag-list { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag-chip {
+  display: inline-block;
+  padding: 1px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-family: Consolas, monospace;
+  background: #eef2f7;
+  border: 1px solid #d5dde8;
+  color: #3a5a80;
+}
+
+pre.progress-tail {
+  margin: 0;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-family: Consolas, "BIZ UDGothic", "MS Gothic", monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
+  /* 高さ・スクロールは親の .progress-block-body が担う */
+}
+
+.edit-form select,
+.edit-form textarea {
+  font: inherit;
+  width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+.edit-form textarea { min-height: 60px; resize: vertical; }
+.edit-form .row { margin-bottom: 8px; }
+.edit-form label { display: block; font-size: 12px; color: #666; margin-bottom: 2px; }
+.save-result { font-size: 12px; margin-left: 8px; }
+.save-result.ok { color: #1e7b2e; }
+.save-result.err { color: #b03020; }
+
+.handoff-block button {
+  background: #2f6db3;
+  color: #fff;
+  border-color: #2f6db3;
+}
+.handoff-block button:hover { background: #285f9c; }
+.handoff-purpose-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #666;
+}
+.handoff-purpose-row select {
+  font: inherit;
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.development-session-block {
+  padding: 9px 10px;
+  border: 1px solid #cfd8e3;
+  border-radius: 4px;
+  background: #f8fafc;
+}
+.development-session-heading,
+.session-item-heading,
+.development-session-actions,
+.session-profile-row {
+  display: flex;
+  align-items: center;
+}
+.development-session-heading {
+  justify-content: space-between;
+  gap: 8px;
+}
+.development-session-heading h3 { margin: 0; }
+.session-workspace-state,
+.session-default,
+.session-cwd,
+.development-session-note,
+.session-config-path {
+  color: #6b7580;
+  font-size: 11px;
+}
+.session-profile-row {
+  gap: 8px;
+  margin: 8px 0 5px;
+  font-size: 12px;
+}
+.session-profile-row select {
+  min-width: 180px;
+  padding: 3px 6px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+  font: inherit;
+}
+.session-profile-label { margin: 8px 0 5px; font-size: 12px; font-weight: bold; }
+.development-session-items { border-top: 1px solid #dde3ea; }
+.development-session-item {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 7px;
+  padding: 8px 2px;
+  border-bottom: 1px solid #e2e7ed;
+  cursor: pointer;
+}
+.development-session-item > input { margin: 3px 0 0; width: 17px; height: 17px; }
+.session-item-content { min-width: 0; }
+.session-item-heading { flex-wrap: wrap; gap: 5px; }
+.session-kind {
+  padding: 1px 6px;
+  border: 1px solid #c9d2dc;
+  border-radius: 9px;
+  color: #52606d;
+  background: #fff;
+  font-size: 10px;
+}
+.session-kind-agent { border-color: #9bb9d8; color: #285f9c; }
+.session-command {
+  display: block;
+  max-width: 100%;
+  margin-top: 3px;
+  overflow-x: auto;
+  white-space: nowrap;
+  color: #29343f;
+  font-size: 11.5px;
+}
+.session-cwd { display: block; margin-top: 2px; }
+.development-session-actions { flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.development-session-actions button { min-height: 34px; }
+.development-session-actions [data-role="start-development-session"] {
+  border-color: #2f6db3;
+  background: #2f6db3;
+  color: #fff;
+  font-weight: 600;
+}
+.development-session-actions [data-role="start-development-session"]:disabled {
+  border-color: #aab4be;
+  background: #aab4be;
+  cursor: not-allowed;
+}
+.development-session-note {
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.session-duplicate-note { color: #855f18; }
+.development-session-result {
+  display: block;
+  min-height: 17px;
+  margin: 5px 0 0;
+}
+.session-empty, .session-config-error { margin-top: 8px; color: #5f6973; }
+.session-config-error { color: #b03020; }
+
+/* Development session: status badge（Configured / Not configured / mismatch / error） */
+.session-status-badge {
+  padding: 1px 8px;
+  border: 1px solid #c9d2dc;
+  border-radius: 9px;
+  color: #52606d;
+  background: #fff;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.session-status-configured { border-color: #7fae6f; color: #2c6e1f; background: #eef7ea; }
+.session-status-not-configured { border-color: #c9d2dc; color: #6b7580; }
+.session-status-target-id-mismatch,
+.session-status-path-mismatch { border-color: #d9ae52; color: #8a611a; background: #fdf5e4; }
+.session-status-invalid,
+.session-status-error { border-color: #d98c8c; color: #a5302a; background: #fbeaea; }
+
+/* Phase 2: 識別情報（Target ID / Path）をコンパクトな1行ずつで表示する。
+   長いpathはページ全体を横スクロールさせず、この要素の中だけで横スクロールさせる */
+.session-identity { min-width: 0; }
+.session-identity-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  min-width: 0;
+}
+.session-identity-row:last-child { margin-bottom: 0; }
+.session-identity-label {
+  flex: none;
+  width: 60px;
+  color: #6b7580;
+  font-size: 11px;
+}
+.session-identity-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 12.5px;
+}
+.session-identity-code {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 2px 4px;
+  border-radius: 3px;
+  background: #f1f4f7;
+}
+.session-identity-copy {
+  flex: none;
+  min-height: 26px;
+  padding: 2px 10px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.session-identity-copy:hover { background: #eef2f7; border-color: #2f6db3; color: #2f6db3; }
+
+/* Phase 4: field単位のvalidation issue一覧 */
+.session-issues { margin-bottom: 9px; }
+.session-issues-heading { color: #a5302a; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.session-issue-list { margin: 0; padding-left: 0; list-style: none; }
+.session-issue {
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  border: 1px solid #f0d3d3;
+  border-radius: 4px;
+  background: #fdf4f4;
+}
+.session-issue-path {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  color: #a5302a;
+  font-size: 11.5px;
+}
+.session-issue-message { margin-top: 2px; font-size: 12px; color: #4a4a4a; }
+.session-issue-hint { margin-top: 2px; font-size: 11.5px; color: #6b7580; }
+.session-issue-more { color: #6b7580; font-size: 11.5px; }
+
+/* Phase 3/5: target-id / path mismatch。設定側の値と正しい値を並べて比較する */
+.session-mismatch {
+  margin-bottom: 9px;
+  padding: 7px 8px;
+  border: 1px solid #eed9ae;
+  border-radius: 4px;
+  background: #fdf5e4;
+  font-size: 12px;
+  color: #4a4a4a;
+}
+.session-mismatch-row { display: flex; align-items: baseline; gap: 6px; margin-top: 3px; }
+.session-mismatch-row:first-child { margin-top: 0; }
+.session-mismatch-label { flex: none; color: #8a611a; font-size: 11px; }
+.session-mismatch-path {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin: 1px 0 4px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  background: #f1f4f7;
+}
+
+/* Phase 4/5: not-configured / mismatch / invalid の操作button。
+   primary（ひな形コピー）を最も目立たせ、secondary（設定ファイルopen）、
+   tertiary（再読み込み・VSCodeだけ開く）の順に優先度を下げる */
+.session-primary-actions,
+.session-secondary-actions,
+.session-tertiary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.session-primary-actions:first-child { margin-top: 0; }
+.session-btn-primary {
+  min-height: 34px;
+  padding: 6px 14px;
+  border-color: #2f6db3;
+  background: #2f6db3;
+  color: #fff;
+  font-weight: 600;
+}
+.session-btn-secondary { min-height: 30px; padding: 4px 12px; }
+.session-btn-tertiary { min-height: 26px; padding: 3px 10px; font-size: 12px; color: #667; }
+
+/* Phase 5/6: 起動プリセット選択（未設定projectの主操作）。preset select →
+   内容preview → 登録buttonをすぐ見える位置にまとめる。長いpreset labelでも
+   ページ全体を横スクロールさせない */
+.session-preset-picker { min-width: 0; }
+.session-preset-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #52606d;
+}
+.session-preset-row select {
+  min-width: 0;
+  max-width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+.session-preset-preview {
+  margin-bottom: 8px;
+  padding: 7px 9px;
+  border: 1px solid #dde3ea;
+  border-radius: 4px;
+  background: #fff;
+}
+.session-preset-preview-heading { color: #6b7580; font-size: 11px; margin-bottom: 3px; }
+.session-preset-preview ul { margin: 0; padding-left: 18px; font-size: 12.5px; }
+.session-preset-note { margin-top: 6px; color: #8a611a; font-size: 11.5px; }
+.session-detail-settings {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px dashed #d5dce3;
+}
+.session-detail-settings-label { color: #6b7580; font-size: 11px; margin-bottom: 6px; }
+
+/* Phase 2/4: 設定情報の折りたたみ。configuredでは初期折りたたみにして
+   常用の起動操作を主役にし、それ以外の状態では初期展開して参照しやすくする */
+.development-session-config-actions { margin-top: 10px; }
+.session-config-details {
+  padding-top: 9px;
+  border-top: 1px dashed #d5dce3;
+}
+.session-config-details > summary {
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  color: #52606d;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.session-config-details .session-identity { margin-top: 7px; }
+.session-config-actions-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.session-config-actions-buttons button { min-height: 30px; padding: 3px 10px; }
+
+.rescan-block button { background: #fff; }
+
+/* Runtime helper card（dogfooding導線）。汎用UIではなく runtime-sample-project
+   の詳細画面にだけ出る最小カード */
+.runtime-card { background: #f8fafc; border: 1px solid #dde3ea; border-radius: 4px; padding: 8px 10px; }
+.runtime-status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+.runtime-status-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+  background: #eee;
+  color: #888;
+}
+.runtime-status-badge.rt-running { background: #e3f4e3; color: #1e7b2e; }
+.runtime-status-badge.rt-not-running { background: #fdf3d8; color: #96700a; }
+.runtime-status-badge.rt-error { background: #fbdcd6; color: #b03020; }
+.runtime-status-badge.rt-unknown { background: #eee; color: #888; }
+.runtime-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.runtime-actions button { background: #fff; font-size: 12px; padding: 3px 10px; }
+.runtime-note { line-height: 1.5; }
+
+/* Phase 5-A: project agent context / command hints */
+.agent-context-block summary {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 8px;
+  user-select: none;
+}
+.agent-context-desc {
+  margin: 0 0 10px;
+  padding: 6px 8px;
+  background: #f4f8fc;
+  border: 1px solid #d5e0ec;
+  border-radius: 4px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #556;
+}
+.agent-context-desc code {
+  font-family: Consolas, monospace;
+  background: #e8eef5;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+.agent-context-block .autofill-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.agent-context-block .row { margin-bottom: 8px; }
+/* Phase 5-E: Agent context は1つのMarkdownテキスト。表示はPROGRESS.mdと同様の
+   Markdown / Plain text タブ切替（デフォルトはMarkdown preview、編集はPlain text） */
+.agent-context-block .context-markdown-input { min-height: 240px !important; }
+.ctx-view-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.ctx-view-header label { flex: 1; }
+.context-md-preview {
+  padding: 8px 10px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  max-height: 55vh; /* 固定320pxだと内部スクロールが出やすかったため、画面の高さに応じて広げる */
+  overflow-y: auto;
+}
+.agent-context-block .row label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 2px;
+}
+.agent-context-block .row textarea {
+  font: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  padding: 4px 6px;
+  min-height: 44px;
+  resize: vertical;
+}
+.agent-context-block button[data-role="save-context"],
+.agent-context-block button[data-role="copy-context"],
+.agent-context-block button[data-role="copy-commands"],
+.agent-context-block button[data-role="copy-context-commands"] {
+  margin-right: 6px;
+  margin-bottom: 4px; /* ボタンが折り返しても詰まらないように */
+}
+.command-hints-input { font-family: Consolas, monospace; font-size: 12px; }
+.command-hints-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cmd-hint-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.cmd-hint-label { color: #667; min-width: 110px; white-space: nowrap; }
+.cmd-hint-cmd {
+  flex: 1;
+  min-width: 0;
+  background: #f7f8fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: Consolas, monospace;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.cmd-hint-copy { flex: none; font-size: 11px; padding: 1px 6px; }
+
+footer {
+  padding: 8px 16px 20px;
+  color: #999;
+  font-size: 12px;
+  font-family: Consolas, monospace;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+#config-source.config-default { color: #b03020; }
+
+/* ---- スマホ表示（800px以下）--------------------------------------------
+   横長テーブルを狭い幅へ圧縮するとrepo名が数文字になりバッジが重なって
+   崩れるため、一覧をカード表示へ切り替える。カードのDOM（.repo-card）は
+   各行の先頭セル内に常に生成されており、ここで表示を切り替えるだけ
+   （PC幅ではカードを出さず、従来のテーブル表示・列幅を一切変更しない）。
+   ブレークポイントは既存の詳細ペイン1カラム化（800px）に合わせる */
+.repo-card { display: none; }
+
+@media (max-width: 800px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { font-size: 13px; }
+  header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 2px 8px;
+    padding: 8px 10px;
+    width: 100%;
+    min-width: 0;
+  }
+  header h1 { align-self: center; min-width: 0; font-size: 17px; }
+  .header-right { display: contents; }
+  #scan-info {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+  #signals-btn,
+  #rescan-btn {
+    grid-row: 1;
+    min-height: 40px;
+    padding: 6px 10px;
+    white-space: nowrap;
+    font-size: 12px;
+    max-width: 44vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #signals-btn { grid-column: 2; }
+  #rescan-btn { grid-column: 3; padding: 6px 13px; font-size: 14px; max-width: none; }
+
+  main { padding: 0 8px 24px; }
+  /* Action Queue: 狭い幅では横スクロールで崩れを防ぐ（セクション内だけでスクロール） */
+  .action-queue { padding: 8px 8px 2px; overflow-x: auto; }
+  .action-queue h2 { font-size: 14px; }
+  .aq-table { font-size: 12px; min-width: 520px; }
+  .aq-now, .aq-whys { max-width: none; }
+  .summary { display: block; padding: 7px 8px 5px; }
+  .summary-desktop { display: none; }
+  .summary-mobile {
+    display: flex;
+    gap: 5px 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 34px;
+    padding: 6px 9px;
+    background: #fff;
+    border: 1px solid #d9dde3;
+    border-radius: 6px;
+    color: #58616d;
+    font-size: 11px;
+  }
+  .summary-mobile span { white-space: nowrap; }
+  .summary-mobile strong { font-size: 13px; color: #25313d; }
+  .summary-mobile .summary-attention strong,
+  .summary-mobile .summary-dirty strong { color: #b03020; }
+
+  .scan-details {
+    margin: 0 8px 5px;
+    border-bottom: 1px solid #dfe3e8;
+  }
+  .scan-details > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 4px 2px;
+    cursor: pointer;
+    color: #4d5966;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .scan-details-meta {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #7a8490;
+    font-size: 10.5px;
+    font-weight: 400;
+  }
+  .target-summary { padding: 3px 0 8px; gap: 4px; }
+  .ts-head { display: none; }
+  /* Targets行のchipはPCではnowrapだが、狭い幅では折り返してはみ出しを防ぐ */
+  .ts-item { width: 100%; white-space: normal; overflow-wrap: anywhere; border-radius: 4px; padding: 3px 7px; }
+  .scan-history { margin: 0 8px 7px; }
+  .scan-history summary { min-height: 32px; padding: 5px 2px; color: #66717d; }
+  .scan-history-body { overflow-wrap: anywhere; }
+
+  .toolbar { display: block; padding: 0 8px 8px; }
+  .primary-filter-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 8px; }
+  .presets {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 1px 0 4px;
+    scrollbar-width: none;
+  }
+  .presets::-webkit-scrollbar { display: none; }
+  .presets button {
+    flex: none;
+    min-height: 36px;
+    padding: 6px 13px;
+    border-radius: 18px;
+    white-space: nowrap;
+  }
+  .project-search {
+    min-width: 0;
+    height: 40px;
+    padding: 0 8px;
+    border: 1px solid #c9cfd7;
+    border-radius: 5px;
+    background: #fff;
+  }
+  .project-search span { flex: none; font-size: 11px; color: #697481; }
+  .project-search input { width: 100%; border: none; padding: 6px 0; outline: none; font-size: 16px; }
+  .mobile-filter-count { display: block; align-self: center; white-space: nowrap; color: #697481; }
+
+  .advanced-filters { display: block; margin-top: 6px; border-top: 1px solid #dfe3e8; }
+  .advanced-filters > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 36px;
+    cursor: pointer;
+    color: #4d5966;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .active-filter-summary { color: #7a8490; font-size: 10.5px; font-weight: 400; }
+  .active-filter-summary.has-active { color: #1a5fa8; }
+  .advanced-filter-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 4px 0 3px;
+    align-items: center;
+  }
+  .advanced-filter-body > label { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px; align-items: center; }
+  .advanced-filter-body select { width: 100%; min-width: 0; height: 36px; font-size: 13px; }
+  .advanced-filter-body .audit-preset { grid-column: 1 / -1; min-height: 36px; }
+  .advanced-filter-body .toolbar-sep { display: none; }
+  .advanced-filter-body .filter-count { display: none; }
+  .advanced-filter-body .ms-toggle { width: 100%; max-width: none; min-height: 36px; text-align: left; }
+  .advanced-filter-body .ms-panel { width: min(300px, calc(100vw - 24px)); max-height: 50vh; }
+
+  /* テーブル構造をblock化し、thead・PC用セルを隠してカードだけを見せる */
+  #repo-table { display: block; border: none; background: none; }
+  #repo-table thead { display: none; }
+  #repo-table tbody { display: block; }
+  #repo-table tr { display: block; }
+  #repo-table tr.repo-row {
+    margin-bottom: 6px;
+    background: none; /* attn系・open系の行背景はカード側で表現する */
+  }
+  #repo-table tr.repo-row:hover { background: none; }
+  #repo-table tr.repo-row td { display: none; }
+  #repo-table tr.repo-row td.repo-name {
+    display: block;
+    width: auto;
+    padding: 0;
+    border: none;
+    overflow: visible;
+    font-weight: normal;
+  }
+  td.repo-name .repo-name-inner { display: none; }
+  #repo-table td.empty { display: block; width: auto; border: 1px solid #ddd; }
+
+  /* カード本体。既存デザイン（白背景・#ddd枠・左アクセント）を踏襲する */
+  .repo-card {
+    display: block;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-left: 4px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 9px;
+  }
+  /* clean以外の左アクセント・薄い背景をカードへ移す（PC行と同じ配色） */
+  tr.repo-row.attn-dirty .repo-card { border-left-color: #d9634f; background: #fdf4f2; }
+  tr.repo-row.attn-untracked-only .repo-card { border-left-color: #e0b23c; background: #fdfaf0; }
+  tr.repo-row.attn-error .repo-card { border-left-color: #b054ac; background: #fbf3fa; }
+  tr.repo-row.attn-no-git .repo-card { border-left-color: #aaa; }
+  tr.repo-row.attn-missing .repo-card { border-left-color: #b03020; background: #fdf0ee; }
+  /* 選択中カード: 青アクセント + 枠 + 「選択中」バッジ（色だけに依存しない） */
+  tr.repo-row.open .repo-card {
+    border-color: #2f6db3;
+    border-left-color: #2f6db3;
+    background: #eaf1fa;
+  }
+  .rc-selected { display: none; }
+  tr.repo-row.open .repo-card .rc-selected {
+    display: inline-block;
+    flex: none;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: #2f6db3;
+    color: #fff;
+  }
+  /* Phase 1(案A): 詳細を開いた選択中カードは、repo名/status/Gitだけへ
+     コンパクト化する。target/branch・hash/idle日数はこの直後の
+     sticky project identity と project status blockで既に見えるため、
+     一覧カード側では重複させない（詳細を閉じれば元の情報量に戻る） */
+  tr.repo-row.open .repo-card { padding-bottom: 8px; }
+  tr.repo-row.open .repo-card .rc-target,
+  tr.repo-row.open .repo-card .rc-meta,
+  tr.repo-row.open .repo-card .rc-foot {
+    display: none;
+  }
+
+  .rc-line1 { display: flex; align-items: flex-start; gap: 8px; }
+  .rc-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: bold;
+    font-size: 15px;
+    line-height: 1.25;
+    overflow-wrap: anywhere; /* 長い名前は省略せず折り返す（識別を最優先） */
+  }
+  .rc-rescan {
+    flex: none;
+    align-self: flex-start;
+    width: 40px;
+    min-height: 40px;
+    font-size: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    color: #556;
+  }
+  .rc-rescan::before { content: "↻"; font-size: 18px; line-height: 1; }
+  .rc-rescan:hover { background: #eef2f7; color: #2f6db3; border-color: #2f6db3; }
+  .rc-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 4px; }
+  .rc-badges .badge { margin-left: 0; }
+  .rc-target { margin-top: 4px; font-size: 11px; color: #707b87; overflow-wrap: anywhere; }
+  .rc-meta {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    margin-top: 2px;
+    font-size: 11.5px;
+    color: #667;
+    overflow-wrap: anywhere; /* 長いbranch名でもカードを押し広げない */
+  }
+  .rc-meta .hash { margin: 0; color: #7b8490; }
+  .rc-foot {
+    margin-top: 3px;
+    font-size: 11px;
+    color: #667;
+  }
+  .rc-foot.idle-fresh { color: #1e7b2e; }
+  .rc-foot.idle-stale { color: #96700a; }
+  .rc-foot.idle-old { color: #b03020; font-weight: bold; }
+  .rc-foot.idle-unknown { color: #aaa; }
+
+  /* 詳細行もblock化し、カードの直後に全幅の枠として出す */
+  #repo-table tr.detail-row { margin: -4px 0 10px; }
+  #repo-table tr.detail-row td {
+    display: block;
+    width: auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+  /* theadが無いのでidentityは画面最上部に貼り付ける（tdのpadding=10pxに合わせる） */
+  .project-identity { top: 0; margin: -10px -10px 8px; padding: 7px 10px; }
+  .project-identity .pi-path { display: none; }
+  .project-identity .pi-line1 { gap: 5px; }
+
+  /* Mobile detail priority: identity/Always/Resume/Handoff render first in DOM
+     order already (Phase 6-K/6-L). Documents/Context/DiagnosticsはPC幅では
+     `.detail-tabs`による排他タブだが、mobile Phase 3ではPCのtab bar自体を隠し、
+     代わりに3つの独立したaccordion（`.mobile-accordion-toggle` +
+     `.detail-panel.mobile-open`）にする。複数同時openを許容し、
+     `openPanel`/`hidden`属性というPC側の状態には一切触れない */
+  .detail-content { display: flex; flex-direction: column; gap: 0; }
+  .detail-tabs { display: none; }
+  .mobile-accordion-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 48px;
+    margin: 0 0 8px;
+    padding: 10px 12px;
+    background: #f4f7fa;
+    border: 1px solid #d5dde5;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #33414d;
+    text-align: left;
+    cursor: pointer;
+  }
+  .mobile-accordion-toggle:focus-visible { outline: 2px solid #2f6db3; outline-offset: 1px; }
+  /* open状態は色だけでなく、背景・枠線・太字の組み合わせ + アイコン回転で示す */
+  .mobile-accordion-toggle[aria-expanded="true"] {
+    background: #eef4fb;
+    border-color: #2f6db3;
+    color: #1a4d80;
+  }
+  .mat-icon {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    margin-left: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.15s ease;
+  }
+  .mobile-accordion-toggle[aria-expanded="true"] .mat-icon { transform: rotate(45deg); }
+  /* PCのhidden属性（openPanelによる排他制御）はmobileでは使わず、
+     accordionごとに独立したmobile-openクラスだけで表示を決める */
+  .detail-panel { display: none; min-width: 0; }
+  .detail-panel.mobile-open { display: block; }
+  .detail-panel:not(:last-of-type) { margin-bottom: 10px; }
+  .progress-mode-toggle .pm-btn { min-height: 44px; padding: 4px 12px; }
+  .diag-section { margin-bottom: 14px; }
+  .detail-panel .block, .diag-section .block { margin-bottom: 10px; }
+  .detail-status { padding: 8px 9px; background: #fff; border: 1px solid #dce1e7; border-radius: 4px; }
+  .detail-status .badge { margin-right: 3px; }
+  .handoff-block {
+    padding: 10px;
+    background: #eef5fb;
+    border: 1px solid #b9d1e6;
+    border-radius: 5px;
+  }
+  .handoff-purpose-row { display: block; }
+  .handoff-purpose-row span { display: block; margin-bottom: 4px; }
+  .handoff-purpose-row select { width: 100%; min-height: 40px; font-size: 16px; }
+  .handoff-block button[data-role="copy-handoff"] { width: 100%; min-height: 44px; font-weight: 600; }
+  .development-session-block { padding: 9px; }
+  .development-session-heading { align-items: flex-start; }
+  .session-profile-row { align-items: stretch; flex-direction: column; gap: 4px; }
+  .session-profile-row select { width: 100%; min-height: 44px; font-size: 16px; }
+  .development-session-item { padding: 10px 2px; }
+  .development-session-item > input { width: 20px; height: 20px; }
+  .session-command { font-size: 12px; }
+  .development-session-actions { display: grid; grid-template-columns: 1fr; }
+  .development-session-actions button { width: 100%; min-height: 44px; white-space: normal; }
+  /* mobile Phase 3: Runtime helper cardのCheck/Open系操作もタップしやすくする
+     （既存のRuntime card機能・APIは変更していない） */
+  .runtime-actions { flex-direction: column; }
+  .runtime-actions button { width: 100%; min-height: 44px; font-size: 13px; }
+  .runtime-status-row { flex-wrap: wrap; }
+  /* Phase 2 mobile: identity行はスマホでも1行のまま維持し、値部分だけを
+     縮小/横スクロールさせ、Copyボタンは右端に固定した44pxタップ領域にする
+     （縦積みにして高さを占有しない） */
+  .session-identity-label { width: 48px; font-size: 10.5px; }
+  .session-identity-copy { min-height: 44px; padding: 6px 12px; }
+  .session-config-actions-buttons { flex-direction: column; }
+  .session-config-actions-buttons button { width: 100%; min-height: 44px; white-space: normal; }
+  .session-primary-actions, .session-secondary-actions, .session-tertiary-actions { flex-direction: column; }
+  .session-primary-actions button, .session-secondary-actions button, .session-tertiary-actions button {
+    width: 100%; min-height: 44px; white-space: normal; font-size: 13px;
+  }
+  .session-issue-path, .session-mismatch-path, .session-identity-code { font-size: 12px; }
+  .session-mismatch-row { flex-wrap: wrap; }
+  /* Phase 5/8 mobile: preset selectはfont-size 16px（iOSの自動拡大回避）で
+     44px以上、登録buttonも44px。preset previewは折り返しのみで横スクロールなし */
+  .session-preset-row select { width: 100%; min-height: 44px; font-size: 16px; }
+  .session-preset-preview ul { padding-left: 16px; overflow-wrap: anywhere; }
+  .session-detail-settings .session-tertiary-actions { flex-direction: column; }
+  .session-detail-settings .session-tertiary-actions button { width: 100%; min-height: 44px; white-space: normal; }
+  .agent-context-desc { display: none; }
+  .agent-context-block { padding: 9px; background: #fff; border: 1px solid #dce1e7; border-radius: 5px; }
+  .agent-context-block .autofill-row { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .agent-context-block .autofill-row button { min-height: 40px; margin: 0; }
+  .agent-context-block .context-markdown-input { min-height: min(52vh, 420px) !important; font-size: 16px; line-height: 1.5; }
+  .context-md-preview { max-width: 100%; max-height: 56vh; overflow-x: hidden; }
+  .readme-details { padding: 8px 9px; background: #fff; border: 1px solid #dce1e7; border-radius: 5px; }
+  .readme-details > summary { min-height: 44px; padding: 5px 0; }
+  .progress-block { padding: 8px 9px; background: #fff; border: 1px solid #dce1e7; border-radius: 5px; }
+  .md-body { min-width: 0; overflow-wrap: anywhere; }
+  .md-body pre.md-code, .md-body .md-table-wrap { max-width: 100%; overflow-x: auto; }
+
+  /* 詳細ペインの小規模スマホ調整 */
+  .progress-block-header, .ctx-view-header { flex-wrap: wrap; } /* 説明文と切替ボタンを無理に1行へ詰めない */
+  .cmd-hint-row { flex-wrap: wrap; }        /* ラベルを上、コマンド+Copyを下の行へ */
+  .cmd-hint-label { width: 100%; min-width: 0; }
+  .cmd-hint-cmd { flex: 1 1 auto; min-width: 0; } /* コマンドは自分の枠内でのみ横スクロール */
+  .cmd-hint-copy { padding: 4px 12px; }     /* タップしやすい大きさを確保 */
+  ul.scan-steps { columns: 1; }
+  footer { padding: 4px 8px 16px; }
+  #scan-root { display: none; }
+}

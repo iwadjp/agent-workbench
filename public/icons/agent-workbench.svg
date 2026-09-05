@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Agent Workbench">
+  <rect width="64" height="64" rx="12" fill="#f5f6f8"/>
+  <rect x="9" y="11" width="46" height="42" rx="6" fill="#17324d"/>
+  <rect x="15" y="18" width="34" height="5" rx="2.5" fill="#dbe7ee"/>
+  <rect x="15" y="29" width="15" height="15" rx="3" fill="#4da1a9"/>
+  <rect x="34" y="29" width="15" height="5" rx="2.5" fill="#dbe7ee"/>
+  <rect x="34" y="39" width="10" height="5" rx="2.5" fill="#dbe7ee"/>
+  <circle cx="49" cy="47" r="6" fill="#ef8354"/>
+</svg>

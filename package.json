@@ -1,0 +1,16 @@
+{
+  "name": "agent-workbench",
+  "version": "0.1.0",
+  "description": "ローカルの複数リポジトリを一覧・状態確認するダッシュボード",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test/resume-summary.test.js && node test/project-signals.test.js && node test/action-queue.test.js && node test/scanner.test.js && node test/scanner-freshness.test.js && node test/vscode-launcher.test.js && node test/development-sessions.test.js && node test/migrate-development-sessions.test.js && node test/app-regression.test.js && node test/pwa.test.js"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

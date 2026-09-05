@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detail pane comparison — Agent Workbench</title>
+  <link rel="stylesheet" href="mock.css">
+</head>
+<body>
+  <header class="app-header"><strong>agent-workbench</strong><span>Detail pane comparison mock · production UI unchanged</span></header>
+  <main class="page">
+    <section class="comparison-intro">
+      <p class="eyebrow">Layer 2 Output 2 · GUI review</p>
+      <h1>詳細ペインの整理を比較する</h1>
+      <p>実データ・API・保存処理には接続しない固定モックです。案を決めるために、表示状態と情報の並びだけを比べます。</p>
+      <div class="controls" aria-label="比較操作">
+        <div class="choice-group" role="group" aria-label="レイアウト案">
+          <button class="choice active" data-variant="a">案A <span>小整理</span></button>
+          <button class="choice" data-variant="b">案B <span>3区分</span></button>
+          <button class="choice" data-variant="c">案C <span>行動中心</span></button>
+        </div>
+        <label>表示状態
+          <select id="state-select">
+            <option value="empty">project未選択</option>
+            <option value="none">project選択・saved contextなし</option>
+            <option value="draft">Auto-fill後・未保存</option>
+            <option value="saved" selected>project選択・saved contextあり</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="notes" aria-live="polite">
+      <div><strong id="variant-title">案A: 現状維持＋小整理</strong><span id="scope">実装規模: 小</span></div>
+      <p id="variant-description"></p>
+      <dl><div><dt>メリット</dt><dd id="pro"></dd></div><div><dt>デメリット</dt><dd id="con"></dd></div></dl>
+    </section>
+
+    <section class="workbench" aria-label="Agent Workbench mock">
+      <aside class="project-list">
+        <div class="list-head"><strong>Projects</strong><span>3 projects</span></div>
+        <button class="repo selected">agent-workbench <span>active</span></button>
+        <button class="repo">project-notes <span>paused</span></button>
+        <button class="repo">sample-tool <span>clean</span></button>
+      </aside>
+      <section class="detail-pane" id="detail-pane"></section>
+    </section>
+  </main>
+  <template id="empty-template">
+    <div class="empty-state"><p class="eyebrow">Detail pane</p><h2>projectを選択してください</h2><p>一覧からprojectを選ぶと、現在のrepo状態、保存済みcontext、再開に使う操作を確認できます。</p></div>
+  </template>
+  <script src="mock.js"></script>
+</body>
+</html>

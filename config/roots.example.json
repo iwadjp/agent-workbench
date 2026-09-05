@@ -1,0 +1,51 @@
+{
+  "targets": [
+    {
+      "id": "public_projects",
+      "label": "public projects",
+      "path": "D:\\path\\to\\public-projects",
+      "type": "repo-directories",
+      "enabled": true,
+      "remoteStatus": true,
+      "excludeNames": ["mixed_parent"]
+    },
+    {
+      "id": "public_nested_repo",
+      "label": "public / nested-repo",
+      "path": "D:\\path\\to\\public-projects\\mixed_parent\\nested-repo",
+      "type": "single-repo",
+      "enabled": true,
+      "remoteStatus": true
+    },
+    {
+      "id": "private_projects",
+      "label": "private projects",
+      "path": "D:\\path\\to\\private-projects",
+      "type": "repo-directories",
+      "enabled": false,
+      "remoteStatus": false
+    },
+    {
+      "id": "workspace_root",
+      "label": "workspace-root",
+      "path": "D:\\path\\to\\workspace-root",
+      "type": "single-repo",
+      "enabled": false,
+      "progressPath": "notes\\PROGRESS.md"
+    },
+    {
+      "id": "wsl_projects",
+      "label": "wsl projects",
+      "path": "\\\\wsl.localhost\\<Distro>\\home\\<user>\\projects",
+      "type": "repo-directories",
+      "enabled": false
+    },
+    {
+      "id": "portfolio",
+      "label": "Portfolio",
+      "path": "D:\\path\\to\\agent-workbench\\data\\portfolio-items",
+      "type": "repo-directories",
+      "enabled": false
+    }
+  ]
+}
